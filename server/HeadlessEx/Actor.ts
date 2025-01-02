@@ -587,9 +587,7 @@ export class Actor extends Entity implements Eventable, PointerEvents, CanInitia
     if (color) {
       this.color = color;
     }
-
-    console.log("line 591", collider);
-
+    /* 
     if (collider) {
       this.collider = new ColliderComponent(collider);
       this.addComponent(this.collider);
@@ -604,6 +602,20 @@ export class Actor extends Entity implements Eventable, PointerEvents, CanInitia
         this.collider = new ColliderComponent();
         this.addComponent(this.collider); // no collider
       }
+    }
+ */
+    if (collider) {
+      this.collider = new ColliderComponent(collider);
+      this.addComponent(this.collider);
+    } else if (radius) {
+      this.collider = new ColliderComponent(Shape.Circle(radius));
+      this.addComponent(this.collider);
+    } else if (width > 0 && height > 0) {
+      this.collider = new ColliderComponent(Shape.Box(width, height, this.anchor));
+      this.addComponent(this.collider);
+    } else {
+      this.collider = new ColliderComponent(Shape.Box(width, height, this.anchor));
+      this.addComponent(this.collider);
     }
   }
 

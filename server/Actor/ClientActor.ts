@@ -10,8 +10,11 @@ import { Side } from "../HeadlessEx/Collision/Side";
 import { Engine } from "../HeadlessEx/Engine";
 
 export class ClientActor extends Actor {
-  isColliding: boolean = false;
-  collisionDirection: string = "";
+  collisionData = {
+    isColliding: false,
+    collisionDirection: Side.None as Side,
+    other: null as Actor | null,
+  };
 
   npcs: any[] = [];
 
@@ -37,7 +40,7 @@ export class ClientActor extends Actor {
     };
 
     super(config);
-    console.log(this);
+
     this.position = { x: startingX, y: startingY, z: 0, w: 0 };
   }
 
@@ -52,27 +55,49 @@ export class ClientActor extends Actor {
   }
 
   public onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    console.log("on Collision start", side);
-    this.isColliding = true;
-    this.collisionDirection = side;
+    this.collisionData.isColliding = true;
+    this.collisionData.collisionDirection = side;
+    this.collisionData.other = other.owner as Actor;
+    let otherActor = other.owner as Actor;
+    let overlap: number = 0;
+    switch (side) {
+      case Side.None:
+        break;
+      case Side.Top:
+        overlap = otherActor.pos.y + otherActor.height - this.pos.y;
+        this.pos = new Vector(this.position.x, this.position.y + overlap);
+        this.position.y += overlap;
+        break;
+      case Side.Bottom:
+        overlap = otherActor.pos.y - (this.pos.y + this.height);
+        this.pos = new Vector(this.position.x, this.position.y + overlap);
+        this.position.y += overlap;
+        break;
+      case Side.Left:
+        overlap = otherActor.pos.x + otherActor.width - this.pos.x;
+        this.pos = new Vector(this.position.x + overlap, this.position.y);
+        this.position.x += overlap;
+        break;
+      case Side.Right:
+        overlap = otherActor.pos.x - (this.pos.x + this.width);
+        this.pos = new Vector(this.position.x + overlap, this.position.y);
+        this.position.x += overlap;
+        break;
+    }
   }
 
   public onCollisionEnd(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    this.isColliding = false;
-    this.collisionDirection = "";
+    this.collisionData.isColliding = false;
+    this.collisionData.collisionDirection = Side.None;
+    this.collisionData.other = null;
+  }
+
+  getIsColliding() {
+    return this.collisionData;
   }
 
   public onPreUpdate(engine: Engine, elapsedMs: number): void {
-    if (this.isColliding) {
-      console.log("COLLIDING", this.collisionDirection);
-    }
     this.pos = new Vector(this.position.x, this.position.y);
-
-    /*  console.clear();
-    console.log({
-      player: { x: this.pos.x, y: this.pos.y },
-      npcs: { ...this.npcs.map(npc => ({ x: npc.pos.x, y: npc.pos.y })) },
-    }); */
   }
 }
 
@@ -89,7 +114,6 @@ export class NPCActor extends Actor {
     let startingY = rng.integer(0, 600);
 
     const colBody = Shape.Box(24, 24);
-    //@ts-ignore
     super({
       name: "NPC",
       x: startingX,
@@ -98,7 +122,6 @@ export class NPCActor extends Actor {
       height: 24,
       collisionType: CollisionType.Fixed,
       collisionGroup: NPCColliders,
-      collider: colBody,
     });
 
     this.position = { x: startingX, y: startingY, z: 0, w: 0 };

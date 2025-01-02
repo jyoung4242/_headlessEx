@@ -6,7 +6,7 @@ import { Engine, EngineOptions } from "./HeadlessEx/Engine";
 import { ClientActor, NPCActor } from "./Actor/ClientActor";
 import { CollisionGroup } from "./HeadlessEx/Collision/Group/CollisionGroup";
 import { SceneActivationContext } from "./HeadlessEx/Interfaces/LifecycleEvents";
-import { Random } from "./HeadlessEx";
+import { Random, Side } from "./HeadlessEx";
 
 const snapshotInterpolation = new SnapshotInterpolation();
 const playerSpeed = 4;
@@ -236,15 +236,19 @@ const updateEntities = (room: RoomId) => {
 
     if (pEnt.directions.length > 0) {
       if (pEnt.directions.includes("up")) {
+        if (pEnt.getIsColliding().isColliding && pEnt.getIsColliding().collisionDirection == Side.Top) return;
         pEnt.position.y -= playerSpeed;
       }
       if (pEnt.directions.includes("down")) {
+        if (pEnt.getIsColliding().isColliding && pEnt.getIsColliding().collisionDirection == Side.Bottom) return;
         pEnt.position.y += playerSpeed;
       }
       if (pEnt.directions.includes("left")) {
+        if (pEnt.getIsColliding().isColliding && pEnt.getIsColliding().collisionDirection == Side.Left) return;
         pEnt.position.x -= playerSpeed;
       }
       if (pEnt.directions.includes("right")) {
+        if (pEnt.getIsColliding().isColliding && pEnt.getIsColliding().collisionDirection == Side.Right) return;
         pEnt.position.x += playerSpeed;
       }
     }
