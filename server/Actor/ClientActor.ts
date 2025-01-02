@@ -1,11 +1,11 @@
 import { Types } from "@geckos.io/snapshot-interpolation";
-import { Actor } from "../HeadlessEx/Actor";
+import { Actor, ActorArgs } from "../HeadlessEx/Actor";
 import { Random } from "../HeadlessEx/Math/Random";
 import { Vector } from "../HeadlessEx/Math/vector";
 import { UUID } from "../UUID";
 import { CollisionType } from "../HeadlessEx/Collision/CollisionType";
 import { NPCColliders, playerColliders } from "../server";
-import { Collider, CollisionContact } from "../HeadlessEx/Collision/Index";
+import { Collider, CollisionContact, Shape } from "../HeadlessEx/Collision/Index";
 import { Side } from "../HeadlessEx/Collision/Side";
 import { Engine } from "../HeadlessEx/Engine";
 
@@ -22,15 +22,22 @@ export class ClientActor extends Actor {
   constructor(name: string, rng: Random) {
     let startingX = rng.integer(0, 800);
     let startingY = rng.integer(0, 600);
-    super({
+
+    const colBody = Shape.Box(24, 24);
+    //@ts-ignore
+    let config: ActorArgs = {
       name,
       x: startingX,
       y: startingY,
       width: 24,
       height: 24,
+      collider: colBody,
       collisionType: CollisionType.Passive,
       collisionGroup: playerColliders,
-    });
+    };
+
+    super(config);
+    console.log(this);
     this.position = { x: startingX, y: startingY, z: 0, w: 0 };
   }
 
@@ -61,11 +68,11 @@ export class ClientActor extends Actor {
     }
     this.pos = new Vector(this.position.x, this.position.y);
 
-    console.clear();
+    /*  console.clear();
     console.log({
       player: { x: this.pos.x, y: this.pos.y },
       npcs: { ...this.npcs.map(npc => ({ x: npc.pos.x, y: npc.pos.y })) },
-    });
+    }); */
   }
 }
 
@@ -80,6 +87,9 @@ export class NPCActor extends Actor {
   constructor(rng: Random) {
     let startingX = rng.integer(0, 800);
     let startingY = rng.integer(0, 600);
+
+    const colBody = Shape.Box(24, 24);
+    //@ts-ignore
     super({
       name: "NPC",
       x: startingX,
@@ -88,6 +98,7 @@ export class NPCActor extends Actor {
       height: 24,
       collisionType: CollisionType.Fixed,
       collisionGroup: NPCColliders,
+      collider: colBody,
     });
 
     this.position = { x: startingX, y: startingY, z: 0, w: 0 };

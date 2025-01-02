@@ -9,7 +9,7 @@ import { SceneActivationContext } from "./HeadlessEx/Interfaces/LifecycleEvents"
 import { Random } from "./HeadlessEx";
 
 const snapshotInterpolation = new SnapshotInterpolation();
-const playerSpeed = 5;
+const playerSpeed = 4;
 
 export const playerColliders = new CollisionGroup("players", 0b0001, 0b0010);
 export const NPCColliders = new CollisionGroup("npcs", 0b0010, 0b0001);
