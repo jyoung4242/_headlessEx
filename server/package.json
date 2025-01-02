@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsx server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@geckos.io/snapshot-interpolation": "^1.1.0",
+    "@hathora/cloud-sdk-typescript": "^2.11.4",
+    "@hathora/server-sdk": "^1.0.0",
+    "detect-collisions": "^6.4.2",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.2"
+  }
+}
